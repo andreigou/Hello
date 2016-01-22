@@ -32,5 +32,5 @@ else
 	define( 'PG4WP_ROOT', ABSPATH.'/wp-content/plugins/pg4wp');
 
 // Here happens all the magic
-require_once(PG4WP_ROOT . '/core.php');
+require_once( PG4WP_ROOT.'/core.php');
 } // Protection against multiple loading
