@@ -4,6 +4,10 @@
     "monolog/monolog": "~1.7",
     "twig/twig": "^1.19",
     "symfony/twig-bridge": "^2.7"
+    "ext-memcached": "*",
+    "ext-mongo": "*",
+    "ext-redis": "*",
+    "ext-phalcon": "*"
   },
   "require-dev": {
     "heroku/heroku-buildpack-php": "*"
