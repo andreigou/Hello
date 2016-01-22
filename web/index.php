@@ -1,25 +1,43 @@
 <?php
 
-require('../vendor/autoload.php');
+use Phalcon\Loader;
+use Phalcon\Mvc\View;
+use Phalcon\Mvc\Application;
+use Phalcon\Di\FactoryDefault;
+use Phalcon\Mvc\Url as UrlProvider;
+use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 
-$app = new Silex\Application();
-$app['debug'] = true;
+try {
 
-// Register the monolog logging service
-$app->register(new Silex\Provider\MonologServiceProvider(), array(
-  'monolog.logfile' => 'php://stderr',
-));
+  // Регистрируем автозагрузчик
+  $loader = new Loader();
+  $loader->registerDirs(array(
+      '../app/controllers/',
+      '../app/models/'
+  ))->register();
 
-// Register view rendering
-$app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => __DIR__.'/views',
-));
+  // Создаем DI
+  $di = new FactoryDefault();
 
-// Our web handlers
+  // Настраиваем компонент View
+  $di->set('view', function () {
+    $view = new View();
+    $view->setViewsDir('../app/views/');
+    return $view;
+  });
 
-$app->get('/', function() use($app) {
-  $app['monolog']->addDebug('logging output.');
-  return $app['twig']->render('index.twig');
-});
+  // Настраиваем базовый URI так, чтобы все генерируемые URI содержали директорию "tutorial"
+  $di->set('url', function () {
+    $url = new UrlProvider();
+    $url->setBaseUri('/tutorial/');
+    return $url;
+  });
 
-$app->run();
+  // Обрабатываем запрос
+  $application = new Application($di);
+
+  echo $application->handle()->getContent();
+
+} catch (\Exception $e) {
+  echo "Exception: ", $e->getMessage();
+}
